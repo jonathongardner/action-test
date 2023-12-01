@@ -1,0 +1,45 @@
+name: update-gem
+
+on:
+  workflow_dispatch:
+    inputs:
+      gem:
+        description: 'Gems to update'
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - http
+          - byebug
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-gem:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: false
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.
+        # bundler-cache: true # NOTE: we dont need to download the gems we can
+    - name: Update gem lock
+      # working-directory: ./app
+      run: "[[ $GEM = 'all' ]] && bundle lock --update=http byebug --conservative || bundle lock --update=$GEM --conservative"
+      env:
+        GEM: ${{ inputs.gem }}
+        BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{secrets.GITHUB_TOKEN}}:x-oauth-basic"
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        title: "fix: Update gems (${{ inputs.gem }})"
+        commit-message: "fix: Update gems (${{ inputs.gem }})"
+        branch: "update-gem-${{ inputs.gem }}"

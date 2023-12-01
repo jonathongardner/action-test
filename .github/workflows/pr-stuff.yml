@@ -1,0 +1,16 @@
+name: update-js
+
+on:
+  pull_request
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  update-gem:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repo
+      run: 'echo "Foo!"'
