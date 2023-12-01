@@ -3,7 +3,7 @@ GEM
   specs:
     addressable (2.8.5)
       public_suffix (>= 2.0.2, < 6.0)
-    byebug (1.1.0)
+    byebug (1.1.1)
       columnize (~> 0.3.6)
       debugger-linecache (~> 1.2.0)
     columnize (0.3.6)
@@ -13,7 +13,7 @@ GEM
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
-    http (5.1.0)
+    http (5.1.1)
       addressable (~> 2.8)
       http-cookie (~> 1.0)
       http-form_data (~> 2.2)
