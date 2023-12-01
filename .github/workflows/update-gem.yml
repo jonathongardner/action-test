@@ -1,0 +1,54 @@
+name: update-gem
+
+on:
+  workflow_dispatch:
+    inputs:
+      gem:
+        description: 'Gems to update'
+        required: true
+        default: all
+        type: choice
+        options:
+          - http
+          - byebug
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-gem:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: false
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.
+        # bundler-cache: true # NOTE: we dont need to download the gems we can
+    - name: Update gem lock
+      # working-directory: ./app
+      run: "bundle lock --update=$GEM --conservative"
+      env:
+        GEM: ${{ inputs.gem }}
+    - name: Create Pull Request
+      uses: googleapis/code-suggester@v4
+      with:
+        command: pr
+        upstream_repo: action-test
+        upstream_owner: jonathongardner
+        description: Auto update gems
+        title: "fix: Update gems (${{ inputs.gem }})"
+        branch: "update-gem"
+        primary: master
+        message: "fix: Update gems (${{ inputs.gem }})"
+        force: true
+        git_dir: '.'
+        fork: false
+        labels: automated
+      env:
+        ACCESS_TOKEN: ${{secrets.GITHUB_TOKEN}}

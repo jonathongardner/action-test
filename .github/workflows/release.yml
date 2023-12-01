@@ -1,0 +1,29 @@
+name: update-other-repo
+
+on:
+  push:
+    branch: :master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-gem:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout JS Repo
+      uses: actions/checkout@v3
+      with:
+        repository: 'jonathongardner/crazy-games'
+        persist-credentials: false
+    - name: Change something
+      # run: npm install && npm run build && mv dist ../app/src # cant do this because its to out of date....
+      run: echo 'bar' > foo
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        title: "feat: Update something"
+        commit-message: "feat: Update something"
+        branch: "update-something"
