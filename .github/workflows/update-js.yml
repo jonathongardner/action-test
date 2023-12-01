@@ -1,0 +1,40 @@
+name: update-js
+
+on:
+  workflow_dispatch
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-gem:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: false
+        path: app
+    - name: Checkout JS Repo
+      uses: actions/checkout@v3
+      with:
+        repository: 'jonathongardner/crazy-games'
+        persist-credentials: false
+        path: js
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+    - name: Install and build
+      working-directory: ./js
+      # run: npm install && npm run build && mv dist ../app/src # cant do this because its to out of date....
+      run: mkdir dist/ && echo 'bar' > dist/foo && mv dist/ ../app/src/
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        title: "feat: Update js"
+        commit-message: "feat: Update js"
+        path: './app'
+        branch: "update-js"
